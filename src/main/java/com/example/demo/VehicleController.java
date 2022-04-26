@@ -2,6 +2,7 @@ package com.example.demo;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -48,8 +49,12 @@ class VehicleController {
   // PUT HTTP Method PUT /cars/{id}
   @PutMapping("cars/{id}")
   Vehicle replaceVehicle(@RequestBody Vehicle newVehicle, @PathVariable Long id) {
-    return new Vehicle();
-    // Finish
+      Optional<Vehicle> byId = repository.findById(id);
+      if (byId.isPresent()){
+          newVehicle.setId(id);
+          repository.save(newVehicle);
+      }
+      return newVehicle;
   }
 
   // DELETE HTTP Method DELETE /cars/{id}

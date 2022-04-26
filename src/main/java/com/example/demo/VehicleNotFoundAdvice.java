@@ -11,7 +11,7 @@ class VehicleNotFoundAdvice {
 
 	// TO BE COMPLETED
   @ResponseBody
-	@ExceptionHandler(VehicleNotFoundException.class)
+  @ExceptionHandler(VehicleNotFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
 	String vehicleNotFoundHandler(VehicleNotFoundException ex) {
 		return ex.getMessage();
