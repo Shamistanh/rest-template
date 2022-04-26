@@ -30,20 +30,43 @@ class VehicleController {
 	}
 
   @GetMapping("/cars") // GET HTTP Method   GET /cars
-  List<Vehicle> all() {
-    return repository.findAll();
+  List<VehicleDTO> all() {
+     return repository.findAll().stream().map(model->{
+         VehicleDTO dto = new VehicleDTO();
+         dto.setGearbox(model.getGearbox());
+         dto.setVehicle(model.getManufacturer()+"-"+model.getModel());
+         dto.setId(model.getId());
+         dto.setVehicleType(model.getVehicleType());
+         dto.setModelYear(model.getModelYear());
+         dto.setFuelType(model.getFuelType());
+         return dto;
+     }).collect(Collectors.toList());
   }
 
   // GET HTTP Method GET /cars/{id}
   @GetMapping("/cars/{id}")
-  Vehicle one(@PathVariable Long id) {
-    return repository.findById(id).orElseThrow(() -> new VehicleNotFoundException(id));
+  VehicleDTO one(@PathVariable Long id) {
+      Vehicle vehicle = repository.findById(id).orElseThrow(() -> new VehicleNotFoundException(id));
+      VehicleDTO vehicleDTO = new VehicleDTO();
+      vehicleDTO.setVehicle(vehicle.getManufacturer() +"-"+vehicle.getModel());
+      vehicleDTO.setFuelType(vehicle.getFuelType());
+      vehicleDTO.setModelYear(vehicle.getModelYear());
+      vehicleDTO.setId(vehicle.getId());
+      vehicleDTO.setGearbox(vehicle.getGearbox());
+      return vehicleDTO;
   }
 
   // POST HTTP Method POST /cars
   @PostMapping("/cars")
-  Vehicle newVehicle(@RequestBody Vehicle newVehicle) {
-    return repository.save(newVehicle);
+  Vehicle newVehicle(@RequestBody VehicleDTO newVehicle) {
+	    Vehicle vehicle = new Vehicle();
+	    vehicle.setManufacturer(newVehicle.getVehicle().split("-")[0]);
+         vehicle.setModel(newVehicle.getVehicle().split("-")[1]);
+         vehicle.setFuelType(newVehicle.getFuelType());
+         vehicle.setId(newVehicle.getId());
+         vehicle.setGearbox(newVehicle.getGearbox());
+	    vehicle.setModel(newVehicle.getVehicle());
+    return repository.save(vehicle);
   }
 
   // PUT HTTP Method PUT /cars/{id}
